@@ -12,8 +12,6 @@ clock = pygame.time.Clock()
 #creating the window
 window = pygame.display.set_mode((800, 800))
 pygame.display.set_caption('Iron Man')
-icon = pygame.image.load('hero.png')
-pygame.display.set_icon(icon)
 
 #creating the avatar
 avatarimg = pygame.image.load('superhero.png')
@@ -72,7 +70,7 @@ def gameover():
 
 #creating the background
 backgroundimg = pygame.image.load('background.png')
-laser_speed = [1, 2, 2, 2, 2, 2, 2, 2, 2, 2]
+laser_speed = [1, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9]
 ok = [0, 0 , 0, 0, 0,0, 0, 0, 0, 0]
 colided = 0
 score_v_change = 1
