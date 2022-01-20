@@ -67,14 +67,16 @@ def scoreshow(x, y):
 #gameover
 def gameover():
 	gameo = font.render("GAME OVER", True, (255, 0, 255))
-	window.blit(gameo, (200, 200))
+	window.blit(gameo, (400, 400))
 
 
 #creating the background
 backgroundimg = pygame.image.load('background.png')
-laser_speed = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+laser_speed = [1, 2, 2, 2, 2, 2, 2, 2, 2, 2]
 ok = [0, 0 , 0, 0, 0,0, 0, 0, 0, 0]
-
+colided = 0
+score_v_change = 1
+fast = 15
 #!! VERY IMPORTANT !!
 #running the window
 running = True
@@ -112,18 +114,30 @@ while running:
 	#elif avatarx >= 736:
 		#avatarx_change = -736				
 	
+
 	#moving the laser up
 	for i in range(num_laser):
 		if lasery[i] >= 800:
 			laserx[i] = random.randint (0, 736)
 			lasery[i] = 0	
-			laser_speed[i] = random.randint(2, 8)/2
+			laser_speed[i] = random.randint(10, fast)/10
 			ok[i] = 0
-			score_v += 1
+			score_v += score_v_change
 		if abs(lasery[i] -  avatary) < 20 and abs(laserx[i] - avatarx) < 50 and ok[i] == 0:
 			print("COLISION DETECTED")
 			ok[i] = 1
 			gameover()
+			colided = 1
+			"""while running:
+				for event in pygame.event.get():
+					if event.type == pygame.quit:
+						running = False
+						gameover()"""
+			#running = False
+
+	if score_v % 50 == 0 and score_v > 50:
+		fast += 1
+		score_v += 1
 	if ufoy >= 800:
 		ufoy = 0
 		ufox = random.randint(0, 672)
@@ -145,6 +159,12 @@ while running:
                 bombing(bombx, bomby)
                 bomby -= bomby_change
 	scoreshow(scorex, scorey)
+	if colided == 1:
+		gameover()
+		score_v_change = 0
+		pygame.display.update()
+		
+		
 	#setting the clock
 	#clock.tick(60)
 	pygame.display.update()
