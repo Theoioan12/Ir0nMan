@@ -1,0 +1,152 @@
+#!/usr/bin/env python3
+#importing the necessary libraries
+import pygame
+#import os 
+#import sys
+import random
+pygame.init()
+
+#framerate
+clock = pygame.time.Clock()
+
+#creating the window
+window = pygame.display.set_mode((800, 800))
+pygame.display.set_caption('Iron Man')
+icon = pygame.image.load('hero.png')
+pygame.display.set_icon(icon)
+
+#creating the avatar
+avatarimg = pygame.image.load('superhero.png')
+avatarx = 336
+avatary = 700
+
+def avatar(x,y):
+	window.blit(avatarimg, (x, y))
+
+#creating the bullet
+bomb_img = pygame.image.load('bomb.png')
+bomby = 700
+bomby_change = 5
+bomb_state = "ready"
+  
+def bombing(x, y):
+	global bomb_state
+	bomb_state = "shoot"
+	window.blit(bomb_img, (x + 16, y + 10))
+
+#creating the laser
+laserimg = []
+laserx = []
+lasery = []
+num_laser = 8 
+
+laserimg = pygame.image.load('asteroid.png')
+for i in range (num_laser):
+	lasery.append(0)
+	laserx.append(random.randint (0, 736))
+
+def laser(x, y):
+	window.blit(laserimg, (x, y))
+
+#creating the bonus
+ufoimg = pygame.image.load('ufo.png')
+ufox = random.randint (0, 672)
+ufoy = 0
+def ufo(x, y):
+	window.blit(ufoimg, (x, y))
+
+#creating score
+score_v = 0
+font = pygame.font.Font('freesansbold.ttf', 32)
+scorex = 10
+scorey = 10
+def scoreshow(x, y):
+	score = font.render("Score : " + str(score_v), True, (255, 0, 255))
+	window.blit(score, (x, y))
+
+#gameover
+def gameover():
+	gameo = font.render("GAME OVER", True, (255, 0, 255))
+	window.blit(gameo, (200, 200))
+
+
+#creating the background
+backgroundimg = pygame.image.load('background.png')
+laser_speed = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+ok = [0, 0 , 0, 0, 0,0, 0, 0, 0, 0]
+
+#!! VERY IMPORTANT !!
+#running the window
+running = True
+while running:
+
+	#closing the window
+	avatarx_change = 0
+	for event in pygame.event.get():
+		if event.type == pygame.QUIT:
+			running = False
+
+		if event.type == pygame.KEYDOWN:
+			if event.key == pygame.K_LEFT:
+				avatarx_change = -30
+				if avatarx <= 30:
+					avatarx_change = 0 
+
+			if event.key == pygame.K_RIGHT:
+				avatarx_change = 30
+				if avatarx >= 724:
+                                        avatarx_change = 0
+
+			if event.key == pygame.K_SPACE or event.key == pygame.K_UP:
+				if bomb_state is  "ready":
+					bombx = avatarx
+				bombing(bombx, bomby)
+								
+		if event.type == pygame.KEYUP:
+			#if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:			
+			avatarx += avatarx_change		
+
+	#moving the avatar from side to side
+	#if avatarx <= 0:
+		#avatarx_change = 736
+	#elif avatarx >= 736:
+		#avatarx_change = -736				
+	
+	#moving the laser up
+	for i in range(num_laser):
+		if lasery[i] >= 800:
+			laserx[i] = random.randint (0, 736)
+			lasery[i] = 0	
+			laser_speed[i] = random.randint(2, 8)/2
+			ok[i] = 0
+			score_v += 1
+		if abs(lasery[i] -  avatary) < 20 and abs(laserx[i] - avatarx) < 50 and ok[i] == 0:
+			print("COLISION DETECTED")
+			ok[i] = 1
+			gameover()
+	if ufoy >= 800:
+		ufoy = 0
+		ufox = random.randint(0, 672)
+	#colouring the window + displaying the charachters
+	window.fill((0, 0 , 0))
+	window.blit(backgroundimg, (0, 0))
+	avatarx += avatarx_change
+	for i in range(num_laser):
+		lasery[i] += laser_speed[i]
+		laser (laserx[i], lasery[i])
+	avatar(avatarx, avatary)
+	ufo(ufox, ufoy)
+	ufoy += 0.4
+	#firing the bomb
+	if bomby <= 0:
+		bomby = avatary		
+		bomb_state = "ready"
+	if bomb_state is "shoot":
+                bombing(bombx, bomby)
+                bomby -= bomby_change
+	scoreshow(scorex, scorey)
+	#setting the clock
+	#clock.tick(60)
+	pygame.display.update()
+
+
